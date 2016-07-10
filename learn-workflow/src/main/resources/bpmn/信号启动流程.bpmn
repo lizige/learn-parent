@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <signal id="TJ" name="通知" activiti:scope="global"></signal>
+  <message id="MSG_TJ" name="通知"></message>
+  <process id="myProcess" name="信息流程被启动了" isExecutable="true">
+    <startEvent id="signalstartevent1" name="Signal start">
+      <signalEventDefinition signalRef="TJ"></signalEventDefinition>
+    </startEvent>
+    <userTask id="usertask1" name="信号流程启动了" activiti:assignee="lizi"></userTask>
+    <sequenceFlow id="flow1" sourceRef="signalstartevent1" targetRef="usertask1">
+      <extensionElements>
+        <activiti:executionListener event="take" expression="${execution.setVariable('message','信号启动')}"></activiti:executionListener>
+      </extensionElements>
+    </sequenceFlow>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <sequenceFlow id="flow2" sourceRef="usertask1" targetRef="endevent1"></sequenceFlow>
+    <startEvent id="messagestartevent1" name="Message start">
+      <messageEventDefinition messageRef="MSG_TJ"></messageEventDefinition>
+    </startEvent>
+    <sequenceFlow id="flow3" sourceRef="messagestartevent1" targetRef="usertask1">
+      <extensionElements>
+        <activiti:executionListener event="take" expression="${execution.setVariable('message','消息启动')}"></activiti:executionListener>
+      </extensionElements>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_myProcess">
+    <bpmndi:BPMNPlane bpmnElement="myProcess" id="BPMNPlane_myProcess">
+      <bpmndi:BPMNShape bpmnElement="signalstartevent1" id="BPMNShape_signalstartevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="60.0" y="218.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask1" id="BPMNShape_usertask1">
+        <omgdc:Bounds height="121.0" width="105.0" x="210.0" y="218.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="440.0" y="270.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="messagestartevent1" id="BPMNShape_messagestartevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="60.0" y="330.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="95.0" y="235.0"></omgdi:waypoint>
+        <omgdi:waypoint x="210.0" y="278.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="315.0" y="278.0"></omgdi:waypoint>
+        <omgdi:waypoint x="440.0" y="287.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="95.0" y="347.0"></omgdi:waypoint>
+        <omgdi:waypoint x="210.0" y="278.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

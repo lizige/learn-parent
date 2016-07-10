@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.wht.org/schema/test"
+     xmlns:test="http://www.springframework.org/schema/security" elementFormDefault="qualified">
+    <element name="lizi">
+       <complexType>
+           <sequence>
+               <element name="name" type="string" />
+               <element name="age" type="integer" />
+           </sequence>
+       </complexType>
+    </element>
+</schema>
