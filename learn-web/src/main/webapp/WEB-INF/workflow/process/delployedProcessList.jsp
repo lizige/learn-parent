@@ -52,6 +52,8 @@
 		                 </td>
 		                 <td>
 		                      <c:if test="${po.suspensionState==1}">
+		                          <a href="<c:url value='/workflow/${po.id}/viewProcessDiagram' />" >查看流程图</a>
+		                          <a href="<c:url value='/workflow/${po.id}/viewProcessXML' />" >查看流程XML</a>
 		                          <a href="<c:url value='/task/preStartProcess?processDefinitionId=${po.id}' />" >启动流程</a>
 		                      </c:if>
 		                 </td>

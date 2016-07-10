@@ -1,21 +1,16 @@
 package com.wht.workflow.web;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,24 +22,20 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.impl.persistence.entity.ByteArrayEntity;
-import org.activiti.engine.impl.persistence.entity.DeploymentEntity;
+
 import org.activiti.engine.impl.persistence.entity.ModelEntity;
-import org.activiti.engine.impl.persistence.entity.TaskEntity;
+
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
-import org.activiti.engine.repository.NativeModelQuery;
+
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
-import org.activiti.engine.task.Task;
 import org.activiti.image.ProcessDiagramGenerator;
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.image.PNGTranscoder;
+import org.activiti.image.impl.DefaultProcessDiagramGenerator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.annotation.Validated;
+
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,12 +49,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.wht.system.model.User;
-import com.wht.system.security.CurrentUser;
-import com.wht.system.security.UserDetailAdapter;
+
 import com.wht.workflow.model.TreeNode;
 
-import sun.security.util.Length;
+
 
 @Controller
 public class WorkflowAction {
@@ -146,16 +135,16 @@ public class WorkflowAction {
 	    
 	     repositoryService.saveModel(m);
 	     
-        //Œ™ƒ£–Õ…˙≥…“ª∏ˆø’µƒwfƒ£–Õ  
+
         ObjectNode editorNode = new ObjectMapper().createObjectNode();  
-        //id∫Õresourceø…“‘√ª”–  
+        //idÔøΩÔøΩresourceÔøΩÔøΩÔøΩÔøΩ√ªÔøΩÔøΩ  
         editorNode.put("id", "canvas");  
         editorNode.put("resourceId", "canvas");  
         ObjectNode stencilSetNode = objectMapper.createObjectNode();   
         stencilSetNode.put("namespace", "http://b3mn.org/stencilset/bpmn2.0#");  
         editorNode.put("stencilset", stencilSetNode);  
           
-        //÷ªÃÌº”bpmnµƒjson ˝æ›º¥ø…  
+  
         repositoryService.addModelEditorSource(m.getId(), editorNode.toString().getBytes("UTF-8"));  
 
 		 return "forward:/workflow/model/list";
@@ -239,7 +228,7 @@ public class WorkflowAction {
 		
         String status = "1";
         
-        String message = "≤ø ≥…π¶!";
+        String message = "ÈÉ®ÁΩ≤ÊàêÂäü";
       
 
         try{
@@ -250,7 +239,7 @@ public class WorkflowAction {
         }catch(Exception ex) {
         	status= "0";
         	
-        	message="≤ø  ß∞‹:"+ex.getMessage();
+        	message="ÈÉ®ÁΩ≤Â§±Ë¥•:"+ex.getMessage();
         }
 
     	node.put("status", status);
@@ -277,7 +266,7 @@ public class WorkflowAction {
 			children.add(child);
 		}
 		
-		TreeNode root = new TreeNode("1",true,"≤ø ∞¸",null,false);
+		TreeNode root = new TreeNode("1",true,"ÔøΩÔøΩÔøΩÔøΩÔøΩ",null,false);
 		
 		root.setChildren(children);
 	
@@ -302,7 +291,7 @@ public class WorkflowAction {
 		
 		node.put("status", "1");
 		
-		node.put("message", "…æ≥˝≥…π¶");
+		node.put("message", "…æÔøΩÔøΩ…πÔøΩ");
 		
 		return node;
 	}
@@ -382,6 +371,74 @@ public class WorkflowAction {
 		
 		return data;
 
+	}
+	
+	@RequestMapping(value="/workflow/{id}/viewProcessDiagram")
+	public void viewProcessDiagram(@PathVariable("id")String id,HttpServletRequest request,HttpServletResponse response) throws IOException {
+		
+		InputStream in =  this.repositoryService.getProcessDiagram(id);
+		
+        byte[] data = new byte[1024];
+        
+        int len = 0 ;
+        
+        response.setContentType("image/x-png");
+        
+        len=in.read(data);
+		
+		while(len!=-1){
+			
+			response.getOutputStream().write(data,0,len);
+			
+			len=in.read(data);
+		}
+		
+		in.close();
+		
+		response.getOutputStream().flush();
+
+	}
+	
+	/**
+	 * Êü•ÁúãÂ∑•‰ΩúÊµÅÂÆö‰πâÁöÑXMLËµÑÊ∫ê
+	 * @param id
+	 * @param request
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value="/workflow/{id}/viewProcessXML")
+	public void viewProcessXML(@PathVariable("id")String id,HttpServletRequest request,HttpServletResponse response) throws IOException {
+		
+		InputStream in =  this.repositoryService.getProcessModel(id);
+
+		byte[] data = new byte[1024];
+		
+		int len=0;
+		
+		response.setContentType("text/xml");
+	
+        while((len=in.read(data))!=-1){
+			
+			response.getOutputStream().write(data,0,len);
+
+		}
+		
+		in.close();
+		
+		response.getOutputStream().flush();
+		
+		
+	}
+	@RequestMapping(value="/workflow/{id}/viewProcessXML")
+	public void viewProcessInstanceDiagram(@PathVariable("id")String id,HttpServletRequest request,HttpServletResponse response) {
+		
+		 ProcessInstance processInstance = this.runtimeService.createProcessInstanceQuery().processInstanceId(id).singleResult();
+		 
+		 BpmnModel bpmnModel = this.repositoryService.getBpmnModel(processInstance.getProcessDefinitionId());
+    
+		 DefaultProcessDiagramGenerator diagramGenerator = new DefaultProcessDiagramGenerator();
+		 
+		 
 	}
 	
 	@RequestMapping(value="/workflow/listProcessDefinition")
